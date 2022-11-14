@@ -56,6 +56,13 @@ print(df.dtypes)
 print('\n==================Checking for null values==================\n')
 print(df.isnull().sum())
 
+print('\n==================Checking for rows with all null values==================\n')
+print(df.isna().all(axis=1).sum())
+
+print('\n==================Value Counts for Class Column==================\n')
+print(df['class'].value_counts())
+
+
 '''will need to do some imputation --> without it there are only 111 rows left '''
 
 print('df size: ', df.shape)
