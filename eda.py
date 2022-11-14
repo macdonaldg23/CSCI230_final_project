@@ -1,3 +1,8 @@
+"""
+CSCI230 Final Project
+Petra Ilic, Grace MacDonald, Carson Cooley, Sarah Martin, Warren Seeds
+Exploratory Data Analysis
+"""
 import pandas as pd 
 import numpy as np 
 from scipy.io.arff import loadarff
