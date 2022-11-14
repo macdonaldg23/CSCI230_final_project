@@ -3,7 +3,6 @@ import numpy as np
 from scipy.io.arff import loadarff
 from mlxtend.plotting import scatterplotmatrix, heatmap
 import matplotlib.pyplot as plt
-from sklearn.feature_selection import chi2
 
 print('\n==================Exploratory Data Analysis==================\n')
 
@@ -39,6 +38,7 @@ print(df.isnull().sum())
 ''' 
 4593 NaN values for class variable -- drop right away because we do not want
                                       to impute target
+    leaves us with 5910 rows
 '''
 
 print('\nDropping null values from class variable...\n')
@@ -61,7 +61,7 @@ print(df.isnull().sum())
 print('df size: ', df.shape)
 
 
-
+#breaks data into 4 groups so we can actually look at graphs
 col1 = ['Attr1', 'Attr2','Attr3','Attr4','Attr5','Attr6','Attr7','Attr8','Attr9','Attr10','Attr11','Attr12','Attr13','Attr14','Attr15','Attr16','class']
 col2 = ['Attr17', 'Attr18','Attr19','Attr20','Attr21','Attr22','Attr23','Attr24','Attr25','Attr26','Attr27','Attr28','Attr29','Attr30','Attr31','Attr32','class']
 col3 = ['Attr33', 'Attr34','Attr35','Attr36','Attr37','Attr38','Attr39','Attr40','Attr41','Attr42','Attr43','Attr44','Attr45','Attr46','Attr47','Attr48','class']
@@ -69,7 +69,7 @@ col4 = ['Attr49', 'Attr50','Attr51','Attr52','Attr53','Attr54','Attr55','Attr56'
 
 
 
-
+''' can not do Pearson's R until we deal with null values'''
 # cm = np.corrcoef(df[col1].values.T)
 # hm = heatmap(cm,row_names=col1,column_names=col1, figsize=(8,8))
 # plt.show()
@@ -88,4 +88,3 @@ col4 = ['Attr49', 'Attr50','Attr51','Attr52','Attr53','Attr54','Attr55','Attr56'
 # cm = np.corrcoef(df[col4].values.T)
 # hm = heatmap(cm,row_names=col4,column_names=col4, figsize=(8,8))
 # plt.show()
-
