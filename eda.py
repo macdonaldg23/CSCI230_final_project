@@ -18,19 +18,19 @@ print('\n==================Exploratory Data Analysis==================\n')
 
 
 print('Importing the dataset...')
-d = loadarff('1year.arff')
+d = loadarff('data/1year.arff')
 df1 = pd.DataFrame(d[0])
 
-d = loadarff('2year.arff')
+d = loadarff('data/2year.arff')
 df2 = pd.DataFrame(d[0])
 
-d = loadarff('3year.arff')
+d = loadarff('data/3year.arff')
 df3 = pd.DataFrame(d[0])
 
-d = loadarff('4year.arff')
+d = loadarff('data/4year.arff')
 df4 = pd.DataFrame(d[0])
 
-d = loadarff('5year.arff')
+d = loadarff('data/5year.arff')
 df5 = pd.DataFrame(d[0])
 
 df = df1 + df2 + df3 + df4 + df5
