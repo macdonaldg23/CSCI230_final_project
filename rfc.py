@@ -16,15 +16,6 @@ from sklearn.pipeline import make_pipeline
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 
-df = eda.df
-X_train = eda.X_train
-X_test = eda.X_test
-y_train = eda.y_train
-y_test = eda.y_test
-X_val = eda.X_val
-y_val = eda.y_val
-
-
 print('\n\n====================================== Beginning Random Forest Classifier ============================================ \n\n')
 
 df = eda.df
@@ -82,3 +73,14 @@ print('ROC-AUC:   %0.6f' % roc_auc_score(y_test, y_pred))
 
 print('\n\n')
 print('RF classification report:\n', classification_report(y_test, y_pred))
+
+print('\n\n------------------------------------------ Feature Importance ----------------------------------------------- \n\n')
+
+print(rfc.feature_importances_)
+
+feature_importance = pd.DataFrame(rfc.feature_importances_,
+                                index = X_train.columns,
+                                columns=['importance']).sort_values('importance', 
+                                                                    ascending=False)
+
+print(feature_importance)
