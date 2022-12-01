@@ -1,19 +1,9 @@
-from audioop import reverse
-from itertools import count
 import eda
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from mlxtend.plotting import scatterplotmatrix, heatmap
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.utils import resample
-from imblearn.over_sampling import SMOTE
-from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree, export_graphviz, plot_tree
-from sklearn.preprocessing import StandardScaler
-from pydotplus import graph_from_dot_data
+from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score
-from sklearn.pipeline import make_pipeline
-from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 
 print('\n\n====================================== Beginning Random Forest Classifier ============================================ \n\n')
