@@ -85,13 +85,13 @@ dtc.fit(X_train, y_train)
 y_pred = dtc.predict(X_test)
 
 
-
+'''
 print('\n\n------------------------------------------ Importance of Each Feature ----------------------------------------------- \n\n')
 feature_importances = pd.DataFrame(dtc.feature_importances_,
                                 index = X_train.columns)
 
 print(feature_importances)
-
+'''
 
 print('\n\n------------------------------------------ Evaluating DTC ----------------------------------------------- \n\n')
 

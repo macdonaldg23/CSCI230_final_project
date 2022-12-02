@@ -9,9 +9,10 @@ from scipy.io.arff import loadarff
 from mlxtend.plotting import scatterplotmatrix, heatmap
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.feature_selection import chi2, f_classif, SelectKBest
+from sklearn.feature_selection import chi2, f_classif, SelectKBest, SequentialFeatureSelector
 from sklearn.model_selection import train_test_split
-
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.decomposition import PCA
 
 
 print('\n==================Exploratory Data Analysis==================\n')
@@ -190,9 +191,36 @@ X = df[col1+col2+col3+col4]
 print(X)
 y = df['class']
 
+'''
+print('\n\n ===================================== Trying Feature Selection =======================================\n\n')
+
+print('\n\n------------------------- Sequential Feature Selection (forwards and backwards) -----------------------\n\n')
+
+knn = KNeighborsClassifier(n_neighbors=3)
+sfs = SequentialFeatureSelector(knn, n_features_to_select=10, direction='backward')
+sfs.fit(X, y)
+chosen_features = sfs.get_feature_names_out()
+print(chosen_features)
+
+X = df[chosen_features]
+'''
+
+print('\n\n ==================================== Trying Dimensionality Reduction ================================\n\n')
+
+print('\n\n--------------------------------------- Principal Component Analysis --------------------------------\n\n')
+
+pca = PCA(n_components=3)
+pca.fit(X)
+print(pca.get_feature_names_out())
+X = pca.transform(X)
+
+print('\n\n =============================== Splitting into Training and Testing ==================================\n\n')
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=0, stratify=y_test)
 
+print(X_train.shape)
+print(X_test.shape)
 
 
 # f_stat = f_classif(X,y)
