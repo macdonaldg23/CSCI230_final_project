@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV, validation_curve
 from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree, export_graphviz, plot_tree
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score
+from sklearn.feature_selection import RFE
 
 
 print('\n\n====================================== Beginning Decision Tree Classifier ============================================ \n\n')

@@ -9,6 +9,7 @@ from scipy.io.arff import loadarff
 from mlxtend.plotting import scatterplotmatrix, heatmap
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import chi2, f_classif, SelectKBest
 from sklearn.model_selection import train_test_split
 
@@ -190,8 +191,15 @@ X = df[col1+col2+col3+col4]
 print(X)
 y = df['class']
 
+scaler = StandardScaler()
+scaler.fit(X)
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=0, stratify=y_test)
+
+X_train_std = scaler.transform(X_train)
+X_test_std = scaler.transform(X_test)
+X_val_std = scaler.transform(X_val)
 
 
 
