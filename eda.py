@@ -9,6 +9,7 @@ from scipy.io.arff import loadarff
 from mlxtend.plotting import scatterplotmatrix, heatmap
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import chi2, f_classif, SelectKBest, SequentialFeatureSelector
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -216,11 +217,25 @@ X = pca.transform(X)
 
 print('\n\n =============================== Splitting into Training and Testing ==================================\n\n')
 
+scaler = StandardScaler()
+scaler.fit(X)
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
 X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=0, stratify=y_test)
 
+X_train_std = scaler.transform(X_train)
+X_test_std = scaler.transform(X_test)
+X_val_std = scaler.transform(X_val)
+
 print(X_train.shape)
 print(X_test.shape)
+
+print(X_train.shape)
+print(X_test.shape)
+
+X_train_std = scaler.transform(X_train)
+X_test_std = scaler.transform(X_test)
+X_val_std = scaler.transform(X_val)
 
 
 # f_stat = f_classif(X,y)
