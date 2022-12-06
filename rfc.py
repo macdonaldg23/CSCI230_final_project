@@ -85,7 +85,7 @@ estimator = RandomForestClassifier(random_state=0,
                                 max_depth=params['max_depth'],
                                 max_features=params['max_features'])
 
-selector = RFE(estimator, n_features_to_select=None, step=1)
+selector = RFE(estimator, n_features_to_select=0.25, step=1)
 selector = selector.fit(X_train, y_train)
 
 selector.fit(X_train, y_train)
