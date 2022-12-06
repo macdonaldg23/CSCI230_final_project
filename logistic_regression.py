@@ -10,11 +10,11 @@ from sklearn.feature_selection import RFE
 print('\n\n====================================== Beginning Logistic Regression Classifier ============================================ \n\n')
 
 df = eda.df
-X_train = eda.X_train_std
-X_test = eda.X_test_std
+X_train = eda.X_train_scaled
+X_test = eda.X_test_scaled
 y_train = eda.y_train
 y_test = eda.y_test
-X_val = eda.X_val_std
+X_val = eda.X_val_scaled
 y_val = eda.y_val
 
 print(df)
