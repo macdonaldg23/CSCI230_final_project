@@ -2,7 +2,7 @@ import eda
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.model_selection import GridSearchCV, KFold, StratifiedKFold
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score, ConfusionMatrixDisplay
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import RFE
@@ -48,7 +48,7 @@ y_pred = rfc.predict(X_test)
 
 print('\n\n------------------------------------------ Evaluating RFC ----------------------------------------------- \n\n')
 k = 10
-kf = KFold(n_splits=k, shuffle=True, random_state=123)
+kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=123)
 
 X_kf = np.concatenate((X_train, X_test))
 y_kf = np.concatenate((y_train, y_test))
@@ -61,7 +61,7 @@ precisions = []
 recalls = []
 f1s = []
 roc_aucs = []
-for train_index, test_index in kf.split(X_kf):
+for train_index, test_index in kf.split(X_kf, y_kf):
     X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
     y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
     
@@ -89,12 +89,6 @@ print("Accuracy: ", round(sum(accuracies)/k, 6))
 print("Precision:", round(sum(precisions)/k, 6))
 print("Recall:   ", round(sum(recalls)/k, 6))
 print("F1:       ", round(sum(f1s)/k, 6))
-print("ROC-AUC:  ", round(sum(roc_aucs)/k, 6))
-
-print("\n\nAccuracy: ", accuracies)
-print("Precision:", precisions)
-print("Recall:   ", recalls)
-print("F1:       ", f1s)
 print("ROC-AUC:  ", round(sum(roc_aucs)/k, 6))
 
 print('\n\n')
@@ -130,7 +124,7 @@ precisions_RFE = []
 recalls_RFE = []
 f1s_RFE = []
 roc_aucs_RFE = []
-for train_index, test_index in kf.split(X_kf):
+for train_index, test_index in kf.split(X_kf, y_kf):
     X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
     y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
     
@@ -154,15 +148,22 @@ plt.show()
 
 print('\n\n------------------------------------ 10-Fold Cross Validation Metrics ----------------------------------------- \n\n')
 
-print("Accuracy: ", round(sum(accuracies_RFE)/k, 6))
-print("Precision:", round(sum(precisions_RFE)/k, 6))
-print("Recall:   ", round(sum(recalls_RFE)/k, 6))
-print("F1:       ", round(sum(f1s_RFE)/k, 6))
-print("ROC-AUC:  ", round(sum(roc_aucs_RFE)/k, 6))
+print("Accuracy: ", round(sum(accuracies_RFE)/len(accuracies_RFE), 6))
+print("Precision:", round(sum(precisions_RFE)/len(precisions_RFE), 6))
+print("Recall:   ", round(sum(recalls_RFE)/len(recalls_RFE), 6))
+print("F1:       ", round(sum(f1s_RFE)/len(f1s_RFE), 6))
+print("ROC-AUC:  ", round(sum(roc_aucs_RFE)/len(roc_aucs_RFE), 6))
+
+print("\n\nAccuracy: ", accuracies_RFE)
+print("Precision:", precisions_RFE)
+print("Recall:   ", recalls_RFE)
+print("F1:       ", f1s_RFE)
+print("ROC-AUC:  ", roc_aucs_RFE)
 
 print('\n\n')
 print('Classification report:\n', classification_report(actual_targets_RFE, predicted_targets_RFE))
-'''
+
+print('\n\n------------------------------------ Non-10-Fold Cross Validation Metrics ----------------------------------------- \n\n')
 selector.fit(X_train, y_train)
 y_pred_RFE = selector.predict(X_test)
 
@@ -179,4 +180,3 @@ print('ROC-AUC:   %0.6f' % roc_auc_score(y_test, y_pred_RFE))
 
 print('\n\n')
 print('RF classification report:\n', classification_report(y_test, y_pred_RFE))
-'''
