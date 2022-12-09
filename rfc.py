@@ -59,46 +59,46 @@ kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=123)
 X_kf = np.concatenate((X_train, X_test))
 y_kf = np.concatenate((y_train, y_test))
 
-predicted_targets = np.array([])
-actual_targets = np.array([])
+# predicted_targets = np.array([])
+# actual_targets = np.array([])
 
-accuracies = []
-precisions = []
-recalls = []
-f1s = []
-roc_aucs = []
-for train_index, test_index in kf.split(X_kf, y_kf):
-    X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
-    y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
+# accuracies = []
+# precisions = []
+# recalls = []
+# f1s = []
+# roc_aucs = []
+# for train_index, test_index in kf.split(X_kf, y_kf):
+#     X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
+#     y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
     
-    rfc.fit(X_train_kf, y_train_kf)
-    y_pred_kf = rfc.predict(X_test_kf)
+#     rfc.fit(X_train_kf, y_train_kf)
+#     y_pred_kf = rfc.predict(X_test_kf)
     
-    predicted_targets = np.append(predicted_targets, y_pred_kf)
-    actual_targets = np.append(actual_targets, y_test_kf)
+#     predicted_targets = np.append(predicted_targets, y_pred_kf)
+#     actual_targets = np.append(actual_targets, y_test_kf)
     
-    accuracies.append(accuracy_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    precisions.append(precision_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    recalls.append(recall_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    f1s.append(f1_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    roc_aucs.append(roc_auc_score(y_test_kf, y_pred_kf))
+#     accuracies.append(accuracy_score(y_true=y_test_kf, y_pred=y_pred_kf))
+#     precisions.append(precision_score(y_true=y_test_kf, y_pred=y_pred_kf))
+#     recalls.append(recall_score(y_true=y_test_kf, y_pred=y_pred_kf))
+#     f1s.append(f1_score(y_true=y_test_kf, y_pred=y_pred_kf))
+#     roc_aucs.append(roc_auc_score(y_test_kf, y_pred_kf))
 
-cm_kf = confusion_matrix(y_true=actual_targets, y_pred=predicted_targets)
-cm_kf_display = ConfusionMatrixDisplay(cm_kf)
-cm_kf_display.from_predictions(y_true=actual_targets, y_pred=predicted_targets, cmap=plt.cm.Blues)
-plt.title("10-Fold Cross Validation Confusion Matrix")
-plt.show()
+# cm_kf = confusion_matrix(y_true=actual_targets, y_pred=predicted_targets)
+# cm_kf_display = ConfusionMatrixDisplay(cm_kf)
+# cm_kf_display.from_predictions(y_true=actual_targets, y_pred=predicted_targets, cmap=plt.cm.Blues)
+# plt.title("10-Fold Cross Validation Confusion Matrix")
+# plt.show()
 
-print('\n\n------------------------------------ 10-Fold Cross Validation Metrics ----------------------------------------- \n\n')
+# print('\n\n------------------------------------ 10-Fold Cross Validation Metrics ----------------------------------------- \n\n')
 
-print("Accuracy: ", round(sum(accuracies)/k, 6))
-print("Precision:", round(sum(precisions)/k, 6))
-print("Recall:   ", round(sum(recalls)/k, 6))
-print("F1:       ", round(sum(f1s)/k, 6))
-print("ROC-AUC:  ", round(sum(roc_aucs)/k, 6))
+# print("Accuracy: ", round(sum(accuracies)/k, 6))
+# print("Precision:", round(sum(precisions)/k, 6))
+# print("Recall:   ", round(sum(recalls)/k, 6))
+# print("F1:       ", round(sum(f1s)/k, 6))
+# print("ROC-AUC:  ", round(sum(roc_aucs)/k, 6))
 
-print('\n\n')
-print('Classification report:\n', classification_report(actual_targets, predicted_targets))
+# print('\n\n')
+# print('Classification report:\n', classification_report(actual_targets, predicted_targets))
 
 
 print('\n\n------------------------------------- Recursive Feature Elimination ------------------------------------- \n\n')
@@ -158,31 +158,31 @@ print("ROC-AUC:  ", roc_aucs_RFE)
 print('\n\n')
 print('Classification report:\n', classification_report(actual_targets_RFE, predicted_targets_RFE))
 
-print('\n\n------------------------------------ Non-10-Fold Cross Validation Metrics ----------------------------------------- \n\n')
-selector.fit(X_train, y_train)
-y_pred_RFE = selector.predict(X_test)
+# print('\n\n------------------------------------ Non-10-Fold Cross Validation Metrics ----------------------------------------- \n\n')
+# selector.fit(X_train, y_train)
+# y_pred_RFE = selector.predict(X_test)
 
-RFE_confmat = confusion_matrix(y_true=y_test, y_pred=y_pred_RFE)
-print(RFE_confmat)
-plot_confusion_matrix(selector, X_test, y_test, cmap=plt.cm.Blues)
-plt.show()
+# RFE_confmat = confusion_matrix(y_true=y_test, y_pred=y_pred_RFE)
+# print(RFE_confmat)
+# plot_confusion_matrix(selector, X_test, y_test, cmap=plt.cm.Blues)
+# plt.show()
 
-print('accuracy:  %0.6f' % accuracy_score(y_true=y_test, y_pred=y_pred_RFE))
-print('precision: %0.6f' % precision_score(y_true=y_test, y_pred=y_pred_RFE))
-print('recall:    %0.6f' % recall_score(y_true=y_test, y_pred=y_pred_RFE))
-print('f1:        %0.6f' % f1_score(y_true=y_test, y_pred=y_pred_RFE))
-print('ROC-AUC:   %0.6f' % roc_auc_score(y_test, y_pred_RFE))
+# print('accuracy:  %0.6f' % accuracy_score(y_true=y_test, y_pred=y_pred_RFE))
+# print('precision: %0.6f' % precision_score(y_true=y_test, y_pred=y_pred_RFE))
+# print('recall:    %0.6f' % recall_score(y_true=y_test, y_pred=y_pred_RFE))
+# print('f1:        %0.6f' % f1_score(y_true=y_test, y_pred=y_pred_RFE))
+# print('ROC-AUC:   %0.6f' % roc_auc_score(y_test, y_pred_RFE))
 
-print('\n\n')
-print('RF classification report:\n', classification_report(y_test, y_pred_RFE))
+# print('\n\n')
+# print('RF classification report:\n', classification_report(y_test, y_pred_RFE))
 
-print('\n\n------------------------------------------ Feature Importance ----------------------------------------------- \n\n')
+# print('\n\n------------------------------------------ Feature Importance ----------------------------------------------- \n\n')
 
-print(rfc.feature_importances_)
+# print(rfc.feature_importances_)
 
-feature_importance = pd.DataFrame(rfc.feature_importances_,
-                                index = X_train.columns,
-                                columns=['importance']).sort_values('importance', 
-                                                                    ascending=False)
+# feature_importance = pd.DataFrame(rfc.feature_importances_,
+#                                 index = X_train.columns,
+#                                 columns=['importance']).sort_values('importance', 
+#                                                                     ascending=False)
 
-print(feature_importance)
+# print(feature_importance)

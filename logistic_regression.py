@@ -8,7 +8,7 @@ import eda
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.model_selection import GridSearchCV, KFold, StratifiedKFold
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score, ConfusionMatrixDisplay
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import RFE
@@ -58,7 +58,7 @@ rfe = RFE(estimator, n_features_to_select=n_features, step=1)
 print('\n\n------------------------- Evaluating LRC with RFE (' + str(n_features) + ' features) ------------------------------ \n\n')
 
 k = 10
-kf = KFold(n_splits=k, shuffle=True, random_state=123)
+kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=123)
 
 X_kf = np.concatenate((X_train, X_test))
 y_kf = np.concatenate((y_train, y_test))
@@ -71,7 +71,7 @@ precisions = []
 recalls = []
 f1s = []
 roc_aucs = []
-for train_index, test_index in kf.split(X_kf):
+for train_index, test_index in kf.split(X_kf,y_kf):
     X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
     y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
     
@@ -103,12 +103,6 @@ print("ROC-AUC:  ", round(sum(roc_aucs)/k, 6))
 
 print('\n\n')
 print('Classification report:\n', classification_report(actual_targets, predicted_targets))
-
-
-
-
-
-
 
 
 
@@ -151,44 +145,44 @@ print('\n\n')
 print('LR classification report:\n', classification_report(y_test, y_pred))
 '''
 
-predicted_targets_lrc = np.array([])
-actual_targets_lrc = np.array([])
+# predicted_targets_lrc = np.array([])
+# actual_targets_lrc = np.array([])
 
-accuracies_lrc = []
-precisions_lrc = []
-recalls_lrc = []
-f1s_lrc = []
-roc_aucs_lrc = []
-for train_index, test_index in kf.split(X_kf):
-    X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
-    y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
+# accuracies_lrc = []
+# precisions_lrc = []
+# recalls_lrc = []
+# f1s_lrc = []
+# roc_aucs_lrc = []
+# for train_index, test_index in kf.split(X_kf):
+#     X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
+#     y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
     
-    estimator.fit(X_train_kf, y_train_kf)
-    y_pred_kf = rfe.predict(X_test_kf)
+#     estimator.fit(X_train_kf, y_train_kf)
+#     y_pred_kf = rfe.predict(X_test_kf)
     
-    predicted_targets_lrc = np.append(predicted_targets, y_pred_kf)
-    actual_targets_lrc = np.append(actual_targets, y_test_kf)
+#     predicted_targets_lrc = np.append(predicted_targets, y_pred_kf)
+#     actual_targets_lrc = np.append(actual_targets, y_test_kf)
     
-    accuracies_lrc.append(estimator.score(X_test_kf, y_test_kf))
-    precisions_lrc.append(precision_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    recalls_lrc.append(recall_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    f1s_lrc.append(f1_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    roc_aucs_lrc.append(roc_auc_score(y_test_kf, y_pred_kf))
+#     accuracies_lrc.append(estimator.score(X_test_kf, y_test_kf))
+#     precisions_lrc.append(precision_score(y_true=y_test_kf, y_pred=y_pred_kf))
+#     recalls_lrc.append(recall_score(y_true=y_test_kf, y_pred=y_pred_kf))
+#     f1s_lrc.append(f1_score(y_true=y_test_kf, y_pred=y_pred_kf))
+#     roc_aucs_lrc.append(roc_auc_score(y_test_kf, y_pred_kf))
 
-cm_kf_lrc = confusion_matrix(y_true=actual_targets_lrc, y_pred=predicted_targets_lrc)
-cm_kf_display_lrc = ConfusionMatrixDisplay(cm_kf_lrc)
-cm_kf_display_lrc.from_predictions(y_true=actual_targets_lrc, y_pred=predicted_targets_lrc, cmap=plt.cm.Blues)
-plt.title("10-Fold Cross Validation Confusion Matrix")
-plt.show()
+# cm_kf_lrc = confusion_matrix(y_true=actual_targets_lrc, y_pred=predicted_targets_lrc)
+# cm_kf_display_lrc = ConfusionMatrixDisplay(cm_kf_lrc)
+# cm_kf_display_lrc.from_predictions(y_true=actual_targets_lrc, y_pred=predicted_targets_lrc, cmap=plt.cm.Blues)
+# plt.title("10-Fold Cross Validation Confusion Matrix")
+# plt.show()
 
-print('\n\n------------------------------------ 10-Fold Cross Validation Metrics (no RFE) ----------------------------------------- \n\n')
+# print('\n\n------------------------------------ 10-Fold Cross Validation Metrics (no RFE) ----------------------------------------- \n\n')
 
-print("Accuracy: ", round(sum(accuracies_lrc)/k, 6))
-print("Precision:", round(sum(precisions_lrc)/k, 6))
-print("Recall:   ", round(sum(recalls_lrc)/k, 6))
-print("F1:       ", round(sum(f1s_lrc)/k, 6))
-print("ROC-AUC:  ", round(sum(roc_aucs_lrc)/k, 6))
+# print("Accuracy: ", round(sum(accuracies_lrc)/k, 6))
+# print("Precision:", round(sum(precisions_lrc)/k, 6))
+# print("Recall:   ", round(sum(recalls_lrc)/k, 6))
+# print("F1:       ", round(sum(f1s_lrc)/k, 6))
+# print("ROC-AUC:  ", round(sum(roc_aucs_lrc)/k, 6))
 
-print('\n\n')
-print('Classification report:\n', classification_report(actual_targets_lrc, predicted_targets_lrc))
+# print('\n\n')
+# print('Classification report:\n', classification_report(actual_targets_lrc, predicted_targets_lrc))
 
