@@ -184,8 +184,8 @@ print('\n\n =============================== Splitting into Training and Testing 
 scaler = RobustScaler()
 scaler.fit(X)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
-X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=0, stratify=y_test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=123, stratify=y)
+X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=123, stratify=y_test)
 
 X_train_scaled = scaler.transform(X_train)
 X_test_scaled = scaler.transform(X_test)
