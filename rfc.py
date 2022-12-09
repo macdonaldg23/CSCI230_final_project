@@ -94,17 +94,6 @@ print("ROC-AUC:  ", round(sum(roc_aucs)/k, 6))
 print('\n\n')
 print('Classification report:\n', classification_report(actual_targets, predicted_targets))
 
-print('\n\n------------------------------------------ Feature Importance ----------------------------------------------- \n\n')
-
-print(rfc.feature_importances_)
-
-feature_importance = pd.DataFrame(rfc.feature_importances_,
-                                index = X_train.columns,
-                                columns=['importance']).sort_values('importance', 
-                                                                    ascending=False)
-
-print(feature_importance)
-
 
 print('\n\n------------------------------------- Recursive Feature Elimination ------------------------------------- \n\n')
 
@@ -180,3 +169,14 @@ print('ROC-AUC:   %0.6f' % roc_auc_score(y_test, y_pred_RFE))
 
 print('\n\n')
 print('RF classification report:\n', classification_report(y_test, y_pred_RFE))
+
+print('\n\n------------------------------------------ Feature Importance ----------------------------------------------- \n\n')
+
+print(rfc.feature_importances_)
+
+feature_importance = pd.DataFrame(rfc.feature_importances_,
+                                index = X_train.columns,
+                                columns=['importance']).sort_values('importance', 
+                                                                    ascending=False)
+
+print(feature_importance)
