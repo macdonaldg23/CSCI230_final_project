@@ -141,7 +141,7 @@ cm_kf_display_RFE.from_predictions(y_true=actual_targets_RFE, y_pred=predicted_t
 plt.title("10-Fold Cross Validation Confusion Matrix")
 plt.show()
 
-print('\n\n------------------------------------ 10-Fold Cross Validation Metrics ----------------------------------------- \n\n')
+print('\n\n------------------------------------ 10-Fold Cross Validation Metrics with RFE ----------------------------------------- \n\n')
 
 print("Accuracy: ", round(sum(accuracies_RFE)/len(accuracies_RFE), 6))
 print("Precision:", round(sum(precisions_RFE)/len(precisions_RFE), 6))

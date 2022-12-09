@@ -154,17 +154,74 @@ print('Classification report:\n', classification_report(actual_targets, predicte
 # plt.tight_layout()
 # plt.show()
 
-print('\n\n------------------------------------------ Feature Importance ----------------------------------------------- \n\n')
+# print('\n\n------------------------------------------ Feature Importance ----------------------------------------------- \n\n')
 
 
-feature_importance = pd.DataFrame(dtc.feature_importances_,
-                                index = X_train.columns,
-                                columns=['importance']).sort_values('importance', 
-                                                                    ascending=False)
+# feature_importance = pd.DataFrame(dtc.feature_importances_,
+#                                 index = X_train.columns,
+#                                 columns=['importance']).sort_values('importance', 
+#                                                                     ascending=False)
 
-print(feature_importance)
+# print(feature_importance)
 
-feature_importance = feature_importance[feature_importance['importance'] != 0]
+# feature_importance = feature_importance[feature_importance['importance'] != 0]
 
-ax = feature_importance.plot.bar(y='importance',rot=0)
+# ax = feature_importance.plot.bar(y='importance',rot=0)
+# plt.show()
+
+
+print('\n\n------------------------------------- Recursive Feature Elimination ------------------------------------- \n\n')
+
+estimator = DecisionTreeClassifier(random_state=0, criterion=params['criterion'], max_depth=params['max_depth'], 
+                            max_features=params['max_features'],  
+                            min_samples_leaf=params['min_samples_leaf'], min_samples_split=params['min_samples_split'], 
+                            min_weight_fraction_leaf=params['min_weight_fraction_leaf'], splitter=params['splitter'])
+
+selector = RFE(estimator, n_features_to_select=0.3, step=1)
+
+predicted_targets_RFE = np.array([])
+actual_targets_RFE = np.array([])
+
+accuracies_RFE = []
+precisions_RFE = []
+recalls_RFE = []
+f1s_RFE = []
+roc_aucs_RFE = []
+for train_index, test_index in kf.split(X_kf, y_kf):
+    X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
+    y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
+    
+    selector.fit(X_train_kf, y_train_kf)
+    y_pred_kf = selector.predict(X_test_kf)
+    
+    predicted_targets_RFE = np.append(predicted_targets_RFE, y_pred_kf)
+    actual_targets_RFE = np.append(actual_targets_RFE, y_test_kf)
+    
+    accuracies_RFE.append(round(accuracy_score(y_true=y_test_kf, y_pred=y_pred_kf), 6))
+    precisions_RFE.append(round(precision_score(y_true=y_test_kf, y_pred=y_pred_kf), 6))
+    recalls_RFE.append(round(recall_score(y_true=y_test_kf, y_pred=y_pred_kf), 6))
+    f1s_RFE.append(round(f1_score(y_true=y_test_kf, y_pred=y_pred_kf), 6))
+    roc_aucs_RFE.append(round(roc_auc_score(y_test_kf, y_pred_kf), 6))
+
+cm_kf_RFE = confusion_matrix(y_true=actual_targets_RFE, y_pred=predicted_targets_RFE)
+cm_kf_display_RFE = ConfusionMatrixDisplay(cm_kf_RFE)
+cm_kf_display_RFE.from_predictions(y_true=actual_targets_RFE, y_pred=predicted_targets_RFE, cmap=plt.cm.Blues)
+plt.title("10-Fold Cross Validation Confusion Matrix")
 plt.show()
+
+print('\n\n------------------------------------ 10-Fold Cross Validation Metrics with RFE ----------------------------------------- \n\n')
+
+print("Accuracy: ", round(sum(accuracies_RFE)/len(accuracies_RFE), 6))
+print("Precision:", round(sum(precisions_RFE)/len(precisions_RFE), 6))
+print("Recall:   ", round(sum(recalls_RFE)/len(recalls_RFE), 6))
+print("F1:       ", round(sum(f1s_RFE)/len(f1s_RFE), 6))
+print("ROC-AUC:  ", round(sum(roc_aucs_RFE)/len(roc_aucs_RFE), 6))
+
+print("\n\nAccuracy: ", accuracies_RFE)
+print("Precision:", precisions_RFE)
+print("Recall:   ", recalls_RFE)
+print("F1:       ", f1s_RFE)
+print("ROC-AUC:  ", roc_aucs_RFE)
+
+print('\n\n')
+print('Classification report:\n', classification_report(actual_targets_RFE, predicted_targets_RFE))
