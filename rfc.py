@@ -1,3 +1,9 @@
+"""
+Random Forest Classifier
+CSCI 230 Final Project
+Grace MacDonald, Warren Seeds, Carson Cooley, Petra Ilic, Sarah Martin
+"""
+
 import eda
 import pandas as pd
 import numpy as np
