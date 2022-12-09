@@ -2,8 +2,8 @@ import eda
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score
+from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score, ConfusionMatrixDisplay
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import RFE
 
@@ -49,6 +49,64 @@ n_features = 5
 
 rfe = RFE(estimator, n_features_to_select=n_features, step=1)
 
+print('\n\n------------------------- Evaluating LRC with RFE (' + str(n_features) + ' features) ------------------------------ \n\n')
+
+k = 10
+kf = KFold(n_splits=k, shuffle=True, random_state=123)
+
+X_kf = np.concatenate((X_train, X_test))
+y_kf = np.concatenate((y_train, y_test))
+
+predicted_targets = np.array([])
+actual_targets = np.array([])
+
+accuracies = []
+precisions = []
+recalls = []
+f1s = []
+roc_aucs = []
+for train_index, test_index in kf.split(X_kf):
+    X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
+    y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
+    
+    rfe.fit(X_train_kf, y_train_kf)
+    y_pred_kf = rfe.predict(X_test_kf)
+    
+    predicted_targets = np.append(predicted_targets, y_pred_kf)
+    actual_targets = np.append(actual_targets, y_test_kf)
+    
+    accuracies.append(rfe.score(X_test_kf, y_test_kf))
+    precisions.append(precision_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    recalls.append(recall_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    f1s.append(f1_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    roc_aucs.append(roc_auc_score(y_test_kf, y_pred_kf))
+
+cm_kf = confusion_matrix(y_true=actual_targets, y_pred=predicted_targets)
+cm_kf_display = ConfusionMatrixDisplay(cm_kf)
+cm_kf_display.from_predictions(y_true=actual_targets, y_pred=predicted_targets, cmap=plt.cm.Blues)
+plt.title("10-Fold Cross Validation Confusion Matrix")
+plt.show()
+
+print('\n\n------------------------------------ 10-Fold Cross Validation Metrics (RFE) ----------------------------------------- \n\n')
+
+print("Accuracy: ", round(sum(accuracies)/k, 6))
+print("Precision:", round(sum(precisions)/k, 6))
+print("Recall:   ", round(sum(recalls)/k, 6))
+print("F1:       ", round(sum(f1s)/k, 6))
+print("ROC-AUC:  ", round(sum(roc_aucs)/k, 6))
+
+print('\n\n')
+print('Classification report:\n', classification_report(actual_targets, predicted_targets))
+
+
+
+
+
+
+
+
+
+'''
 rfe.fit(X_train, y_train)
 estimator.fit(X_train, y_train)
 y_pred_RFE = rfe.predict(X_test)
@@ -69,9 +127,9 @@ print('ROC-AUC:   %0.6f' % roc_auc_score(y_test, y_pred_RFE))
 
 print('\n\n')
 print('LR classification report:\n', classification_report(y_test, y_pred_RFE))
-
+'''
 print('\n\n------------------------------------------ LRC Evaluation (No RFE or SBS) ----------------------------------------------- \n\n')
-
+'''
 confmat_RFE = confusion_matrix(y_true=y_test, y_pred=y_pred)
 print(confmat)
 plot_confusion_matrix(estimator, X_test, y_test, cmap=plt.cm.Blues)
@@ -85,4 +143,46 @@ print('ROC-AUC:   %0.6f' % roc_auc_score(y_test, y_pred))
 
 print('\n\n')
 print('LR classification report:\n', classification_report(y_test, y_pred))
+'''
+
+predicted_targets_lrc = np.array([])
+actual_targets_lrc = np.array([])
+
+accuracies_lrc = []
+precisions_lrc = []
+recalls_lrc = []
+f1s_lrc = []
+roc_aucs_lrc = []
+for train_index, test_index in kf.split(X_kf):
+    X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
+    y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
+    
+    estimator.fit(X_train_kf, y_train_kf)
+    y_pred_kf = rfe.predict(X_test_kf)
+    
+    predicted_targets_lrc = np.append(predicted_targets, y_pred_kf)
+    actual_targets_lrc = np.append(actual_targets, y_test_kf)
+    
+    accuracies_lrc.append(estimator.score(X_test_kf, y_test_kf))
+    precisions_lrc.append(precision_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    recalls_lrc.append(recall_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    f1s_lrc.append(f1_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    roc_aucs_lrc.append(roc_auc_score(y_test_kf, y_pred_kf))
+
+cm_kf_lrc = confusion_matrix(y_true=actual_targets_lrc, y_pred=predicted_targets_lrc)
+cm_kf_display_lrc = ConfusionMatrixDisplay(cm_kf_lrc)
+cm_kf_display_lrc.from_predictions(y_true=actual_targets_lrc, y_pred=predicted_targets_lrc, cmap=plt.cm.Blues)
+plt.title("10-Fold Cross Validation Confusion Matrix")
+plt.show()
+
+print('\n\n------------------------------------ 10-Fold Cross Validation Metrics (no RFE) ----------------------------------------- \n\n')
+
+print("Accuracy: ", round(sum(accuracies_lrc)/k, 6))
+print("Precision:", round(sum(precisions_lrc)/k, 6))
+print("Recall:   ", round(sum(recalls_lrc)/k, 6))
+print("F1:       ", round(sum(f1s_lrc)/k, 6))
+print("ROC-AUC:  ", round(sum(roc_aucs_lrc)/k, 6))
+
+print('\n\n')
+print('Classification report:\n', classification_report(actual_targets_lrc, predicted_targets_lrc))
 

@@ -2,9 +2,9 @@ import eda
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV, validation_curve
+from sklearn.model_selection import GridSearchCV, validation_curve, KFold
 from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree, export_graphviz, plot_tree
-from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score, ConfusionMatrixDisplay
 from sklearn.feature_selection import RFE
 
 
@@ -95,24 +95,52 @@ print(feature_importances)
 '''
 
 print('\n\n------------------------------------------ Evaluating DTC ----------------------------------------------- \n\n')
+k = 10
+kf = KFold(n_splits=k, shuffle=True, random_state=123)
 
-confmat = confusion_matrix(y_true=y_test, y_pred=y_pred)
-print(confmat)
-plot_confusion_matrix(dtc, X_test, y_test, cmap=plt.cm.Blues)
+X_kf = np.concatenate((X_train, X_test))
+y_kf = np.concatenate((y_train, y_test))
+
+predicted_targets = np.array([])
+actual_targets = np.array([])
+
+accuracies = []
+precisions = []
+recalls = []
+f1s = []
+roc_aucs = []
+for train_index, test_index in kf.split(X_kf):
+    X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
+    y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
+    
+    dtc.fit(X_train_kf, y_train_kf)
+    y_pred_kf = dtc.predict(X_test_kf)
+    
+    predicted_targets = np.append(predicted_targets, y_pred_kf)
+    actual_targets = np.append(actual_targets, y_test_kf)
+    
+    accuracies.append(dtc.score(X_test_kf, y_test_kf))
+    precisions.append(precision_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    recalls.append(recall_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    f1s.append(f1_score(y_true=y_test_kf, y_pred=y_pred_kf))
+    roc_aucs.append(roc_auc_score(y_test_kf, y_pred_kf))
+
+cm_kf = confusion_matrix(y_true=actual_targets, y_pred=predicted_targets)
+cm_kf_display = ConfusionMatrixDisplay(cm_kf)
+cm_kf_display.from_predictions(y_true=actual_targets, y_pred=predicted_targets, cmap=plt.cm.Blues)
+plt.title("10-Fold Cross Validation Confusion Matrix")
 plt.show()
 
-print('\n\n------------------------------------------ DTC Metrics ----------------------------------------------- \n\n')
+print('\n\n------------------------------------ 10-Fold Cross Validation Metrics ----------------------------------------- \n\n')
 
-
-print('accuracy:  %0.6f' % accuracy_score(y_true=y_test, y_pred=y_pred))
-print('precision: %0.6f' % precision_score(y_true=y_test, y_pred=y_pred))
-print('recall:    %0.6f' % recall_score(y_true=y_test, y_pred=y_pred))
-print('f1:        %0.6f' % f1_score(y_true=y_test, y_pred=y_pred))
-print('ROC-AUC:   %0.6f' % roc_auc_score(y_test, y_pred))
+print("Accuracy: ", round(sum(accuracies)/k, 6))
+print("Precision:", round(sum(precisions)/k, 6))
+print("Recall:   ", round(sum(recalls)/k, 6))
+print("F1:       ", round(sum(f1s)/k, 6))
+print("ROC-AUC:  ", round(sum(roc_aucs)/k, 6))
 
 print('\n\n')
-print('DT classification report:\n', classification_report(y_test, y_pred))
-
+print('Classification report:\n', classification_report(actual_targets, predicted_targets))
 
 # print('\n\n----------------------------- Printing Graphical Representation of DTC ------------------------------------- \n\n')
 
