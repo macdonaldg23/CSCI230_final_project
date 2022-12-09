@@ -53,6 +53,9 @@ svm = SVC(random_state=0,
 k = 10
 kf = KFold(n_splits=k, shuffle=True, random_state=123)
 
+X_kf = np.concatenate((X_train, X_test))
+y_kf = np.concatenate((y_train, y_test))
+
 predicted_targets = np.array([])
 actual_targets = np.array([])
 
