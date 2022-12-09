@@ -109,10 +109,10 @@ print(feature_importance)
 print('\n\n------------------------------------- Recursive Feature Elimination ------------------------------------- \n\n')
 
 estimator = RandomForestClassifier(random_state=0, 
-                                n_estimators = params['n_estimators'], 
-                                criterion=params['criterion'], 
-                                max_depth=params['max_depth'],
-                                max_features=params['max_features'])
+                                   n_estimators = params['n_estimators'], 
+                                   criterion=params['criterion'], 
+                                   max_depth=params['max_depth'],
+                                   max_features=params['max_features'])
 
 selector = RFE(estimator, n_features_to_select=0.25, step=1)
 
@@ -129,16 +129,16 @@ for train_index, test_index in kf.split(X_kf, y_kf):
     y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
     
     selector.fit(X_train_kf, y_train_kf)
-    y_pred_kf = rfc.predict(X_test_kf)
+    y_pred_kf = selector.predict(X_test_kf)
     
     predicted_targets_RFE = np.append(predicted_targets_RFE, y_pred_kf)
     actual_targets_RFE = np.append(actual_targets_RFE, y_test_kf)
     
-    accuracies_RFE.append(accuracy_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    precisions_RFE.append(precision_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    recalls_RFE.append(recall_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    f1s_RFE.append(f1_score(y_true=y_test_kf, y_pred=y_pred_kf))
-    roc_aucs_RFE.append(roc_auc_score(y_test_kf, y_pred_kf))
+    accuracies_RFE.append(round(accuracy_score(y_true=y_test_kf, y_pred=y_pred_kf), 6))
+    precisions_RFE.append(round(precision_score(y_true=y_test_kf, y_pred=y_pred_kf), 6))
+    recalls_RFE.append(round(recall_score(y_true=y_test_kf, y_pred=y_pred_kf), 6))
+    f1s_RFE.append(round(f1_score(y_true=y_test_kf, y_pred=y_pred_kf), 6))
+    roc_aucs_RFE.append(round(roc_auc_score(y_test_kf, y_pred_kf), 6))
 
 cm_kf_RFE = confusion_matrix(y_true=actual_targets_RFE, y_pred=predicted_targets_RFE)
 cm_kf_display_RFE = ConfusionMatrixDisplay(cm_kf_RFE)
