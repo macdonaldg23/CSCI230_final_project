@@ -52,7 +52,7 @@ rfc.fit(X_train, y_train)
 y_pred = rfc.predict(X_test)
 
 
-print('\n\n------------------------------------------ Evaluating RFC ----------------------------------------------- \n\n')
+#print('\n\n------------------------------------------ Evaluating RFC ----------------------------------------------- \n\n')
 k = 10
 kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=123)
 
@@ -148,12 +148,6 @@ print("Precision:", round(sum(precisions_RFE)/len(precisions_RFE), 6))
 print("Recall:   ", round(sum(recalls_RFE)/len(recalls_RFE), 6))
 print("F1:       ", round(sum(f1s_RFE)/len(f1s_RFE), 6))
 print("ROC-AUC:  ", round(sum(roc_aucs_RFE)/len(roc_aucs_RFE), 6))
-
-print("\n\nAccuracy: ", accuracies_RFE)
-print("Precision:", precisions_RFE)
-print("Recall:   ", recalls_RFE)
-print("F1:       ", f1s_RFE)
-print("ROC-AUC:  ", roc_aucs_RFE)
 
 print('\n\n')
 print('Classification report:\n', classification_report(actual_targets_RFE, predicted_targets_RFE))

@@ -7,7 +7,7 @@ import eda
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV, validation_curve, KFold
+from sklearn.model_selection import GridSearchCV, validation_curve, StratifiedKFold
 from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree, export_graphviz, plot_tree
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix, classification_report, roc_auc_score, ConfusionMatrixDisplay
 from sklearn.feature_selection import RFE
@@ -101,7 +101,7 @@ print(feature_importances)
 
 print('\n\n------------------------------------------ Evaluating DTC ----------------------------------------------- \n\n')
 k = 10
-kf = KFold(n_splits=k, shuffle=True, random_state=123)
+kf = StratifiedKFold(n_splits=k, shuffle=True, random_state=123)
 
 X_kf = np.concatenate((X_train, X_test))
 y_kf = np.concatenate((y_train, y_test))
@@ -114,7 +114,7 @@ precisions = []
 recalls = []
 f1s = []
 roc_aucs = []
-for train_index, test_index in kf.split(X_kf):
+for train_index, test_index in kf.split(X_kf, y_kf):
     X_train_kf, X_test_kf = X_kf[train_index], X_kf[test_index]
     y_train_kf, y_test_kf = y_kf[train_index], y_kf[test_index]
     
